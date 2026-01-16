@@ -33,12 +33,12 @@ export function ToastProvider({ children }: ToastProviderProps) {
 
   const pushToast = useCallback((toast: Omit<Toast, 'id' | 'createdAt'>) => {
     const id = createId()
-    setToasts((prev) => [...prev, { ...toast, id, createdAt: Date.now() }])
+    setToasts((prev: Toast[]) => [...prev, { ...toast, id, createdAt: Date.now() }])
     return id
   }, [])
 
   const dismissToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id))
+    setToasts((prev: Toast[]) => prev.filter((toast) => toast.id !== id))
   }, [])
 
   const clearToasts = useCallback(() => {
@@ -87,11 +87,10 @@ function ToastViewport() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-4 z-[1000] flex flex-col items-center gap-3 px-4">
-      {toasts.map((toast) => (
-        <div
+      {toasts.map((toast: Toast) => (
+        <output
           key={toast.id}
           className="pointer-events-auto flex w-full max-w-md flex-col gap-2 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 shadow-lg shadow-black/40 backdrop-blur"
-          role="status"
         >
           <div className="flex items-center justify-between">
             {toast.title ? <div className="text-sm font-semibold text-slate-100">{toast.title}</div> : <span className="text-sm font-semibold text-slate-100">Notification</span>}
@@ -105,7 +104,7 @@ function ToastViewport() {
           >
             Dismiss
           </button>
-        </div>
+        </output>
       ))}
     </div>
   )
