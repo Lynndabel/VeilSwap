@@ -33,11 +33,11 @@ export function useTokenBalance(token?: SwapToken) {
 
   const load = useCallback(async () => {
     if (!canQuery || !token || !provider || !address) {
-      setState((prev) => ({ ...prev, balance: undefined, formatted: '--', isLoading: false, error: undefined }))
+      setState((prev: TokenBalanceState) => ({ ...prev, balance: undefined, formatted: '--', isLoading: false, error: undefined }))
       return
     }
     try {
-      setState((prev) => ({ ...prev, isLoading: true, error: undefined }))
+      setState((prev: TokenBalanceState) => ({ ...prev, isLoading: true, error: undefined }))
       const contract = new Contract(token.address, ERC20_ABI, provider)
       const result: bigint = await contract.balanceOf(address)
       setState({
