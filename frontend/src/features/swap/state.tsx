@@ -1,7 +1,6 @@
 import { ReactNode, createContext, useContext, useMemo, useReducer, type Dispatch } from 'react'
 import { SwapStep, getNextStep } from './steps'
-
-export type SwapToken = { address: `0x${string}`; symbol: string; decimals: number }
+import type { SwapToken } from './types'
 
 type SwapPair = {
   tokenIn?: SwapToken
