@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Swap } from './pages/Swap'
 import { Landing } from './pages/Landing'
+import { SwapProvider } from './features/swap/state'
+import { SwapScreen } from './features/swap/SwapScreen'
 
 export default function App() {
   const [route, setRoute] = useState<'landing' | 'swap'>('swap')
@@ -9,7 +10,9 @@ export default function App() {
       {route === 'landing' ? (
         <Landing onLaunch={() => setRoute('swap')} />
       ) : (
-        <Swap />
+        <SwapProvider>
+          <SwapScreen />
+        </SwapProvider>
       )}
     </div>
   )
