@@ -47,7 +47,7 @@ export function Swap() {
         />
         <SwapButton tokenA={tokenA} tokenB={tokenB} amountA={amountA} privacy={privacy} />
         <div className="text-xs text-gray-500">
-          {privacy ? 'Private swap: amount hidden' : 'Public swap: amount invisible'}
+          {privacy ? 'Private swap: amount hidden' : 'Public swap: amount visible'}
         </div>
       </div>
     </div>
