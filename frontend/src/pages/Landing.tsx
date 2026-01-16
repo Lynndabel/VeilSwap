@@ -6,7 +6,7 @@ export function Landing({ onLaunch }: Props) {
       <div className="max-w-2xl">
         <h1 className="text-4xl font-bold">PrivateSwap</h1>
         <p className="mt-4 text-gray-300">
-          Confidential swaps on Avalanche Fuji. Hide your amounts, keep price discovery.
+          Confidential swaps on Avalanche Fuji. Hide your amounts, keep price discovery always.
         </p>
       </div>
       <button
