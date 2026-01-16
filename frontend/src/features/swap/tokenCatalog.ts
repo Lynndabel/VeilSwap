@@ -1,4 +1,4 @@
-import type { SwapToken } from './state'
+import type { SwapToken } from './types'
 
 export const DEFAULT_TOKENS: SwapToken[] = [
   { address: '0x0000000000000000000000000000000000000000', symbol: 'pAVAX', decimals: 18 },
