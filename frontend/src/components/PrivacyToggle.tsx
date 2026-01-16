@@ -1,7 +1,7 @@
 type Props = { value: boolean; onChange: (v: boolean) => void }
 
 export function PrivacyToggle({ value, onChange }: Props) {
-  return (
+  return ( 
     <div className="flex items-center gap-3">
       <span className="text-sm text-gray-400">Privacy Mode</span>
       <button
