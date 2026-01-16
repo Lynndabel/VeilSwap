@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useMemo, useReducer, type Dispatch } from 'react'
-import { SwapStep, STEP_ORDER } from './steps'
+import { SwapStep, getNextStep } from './steps'
 
 type SwapPair = {
   tokenIn?: { address: `0x${string}`; symbol: string; decimals: number }
@@ -33,18 +33,15 @@ const INITIAL_STATE: SwapState = {
   privacyEnabled: true
 }
 
-function getNextStep(current: SwapStep): SwapStep {
-  const idx = STEP_ORDER.indexOf(current)
-  if (idx === -1) return STEP_ORDER[0]
-  return idx === STEP_ORDER.length - 1 ? current : STEP_ORDER[idx + 1]
-}
-
-function reducer(state: SwapState, action: any): SwapState {
+function reducer(state: SwapState, action: SwapAction): SwapState {
   switch (action.type) {
     case 'SET_STEP':
       return { ...state, step: action.step }
-    case 'NEXT_STEP':
-      return { ...state, step: getNextStep(state.step) }
+    case 'NEXT_STEP': {
+      const next = getNextStep(state.step)
+      if (next === state.step) return state
+      return { ...state, step: next }
+    }
     case 'SET_PAIR':
       return { ...state, pair: { ...state.pair, ...action.pair } }
     case 'SET_AMOUNTS':
