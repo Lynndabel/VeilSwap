@@ -4,6 +4,7 @@ import { encodePacked, parseUnits } from 'viem'
 
 // Optional: eERC SDK hook placeholder (API surface may vary)
 // import { useEERC } from '@avalabs/eerc-sdk'
+//done
 
 type Props = {
   tokenA: { address: `0x${string}`; symbol: string; decimals: number }
