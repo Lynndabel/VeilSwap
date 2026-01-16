@@ -20,7 +20,9 @@ type SwapState = {
   privacyEnabled: boolean
   quote?: {
     amountOutWei?: bigint
+    minAmountOutWei?: bigint
     formatted?: string
+    formattedMin?: string
     priceImpactBps?: number
   }
   lastTx?: {
