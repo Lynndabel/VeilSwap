@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Landing } from './pages/Landing'
 import { SwapProvider } from './features/swap/state'
 import { WalletProvider } from './features/wallet/WalletProvider'
+import { ToastProvider } from './features/notifications/ToastProvider'
 import { SwapScreen } from './features/swap/SwapScreen'
 
 export default function App() {
@@ -12,9 +13,11 @@ export default function App() {
         <Landing onLaunch={() => setRoute('swap')} />
       ) : (
         <WalletProvider>
-          <SwapProvider>
-            <SwapScreen />
-          </SwapProvider>
+          <ToastProvider>
+            <SwapProvider>
+              <SwapScreen />
+            </SwapProvider>
+          </ToastProvider>
         </WalletProvider>
       )}
     </div>

@@ -4,6 +4,10 @@ import { StepTabs } from './components/StepTabs'
 import { useSwap } from './state'
 import { SWAP_STEPS, type SwapStep } from './steps'
 import { ConnectStep } from './steps/ConnectStep'
+import { ConfigureStep } from './steps/ConfigureStep'
+import { ReviewStep } from './steps/ReviewStep'
+import { ConfirmedStep } from './steps/ConfirmedStep'
+import { useInsights } from './insights'
 
 function StepPlaceholder({ step }: Readonly<{ step: SwapStep }>) {
   const meta = useMemo(() => SWAP_STEPS.find((s) => s.id === step), [step])
@@ -23,22 +27,76 @@ function StepPlaceholder({ step }: Readonly<{ step: SwapStep }>) {
   )
 }
 
-function InsightsPlaceholder() {
+function InsightsPanel() {
+  const { status, reserves, recentSwaps } = useInsights()
+
   return (
     <div className="space-y-6">
       <div className="rounded-3xl border border-white/5 bg-white/5 p-6 shadow-inner shadow-black/40">
-        <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-200">Insights</h4>
-        <p className="mt-2 text-sm text-slate-400">
-          Analytics, reserve snapshots, and privacy explainers will land here to guide your private swap decisions.
-        </p>
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-200">Pool reserves</h4>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+            {status === 'loading' ? 'Loading…' : status === 'ready' ? 'Live' : 'Snapshot'}
+          </span>
+        </div>
+        <div className="mt-4 space-y-3 text-xs text-slate-300">
+          {reserves.length === 0 ? (
+            <p>No reserve data available yet.</p>
+          ) : (
+            reserves.map((reserve) => (
+              <div
+                key={`${reserve.tokenA.symbol}-${reserve.tokenB.symbol}`}
+                className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3"
+              >
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                  <span>
+                    {reserve.tokenA.symbol}/{reserve.tokenB.symbol}
+                  </span>
+                  <span>{new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' }).format(-Math.round((Date.now() - reserve.updatedAt) / (1000 * 60)), 'minute')}</span>
+                </div>
+                <div className="mt-2 grid gap-2 text-sm text-slate-100 md:grid-cols-2">
+                  <div>
+                    <div className="text-xs text-slate-500">Reserve {reserve.tokenA.symbol}</div>
+                    <div className="font-semibold">{reserve.reserveA}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-500">Reserve {reserve.tokenB.symbol}</div>
+                    <div className="font-semibold">{reserve.reserveB}</div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
+
       <div className="rounded-3xl border border-white/5 bg-white/5 p-6">
-        <h5 className="text-sm font-semibold text-slate-200">What to expect</h5>
-        <ul className="mt-3 space-y-2 text-xs text-slate-400">
-          <li>• Live reserve ratios and slippage insights</li>
-          <li>• Activity feed for recent shielded swaps</li>
-          <li>• Educational modules on encrypted transaction flows</li>
-        </ul>
+        <div className="flex items-center justify-between">
+          <h5 className="text-sm font-semibold text-slate-200">Recent shielded swaps</h5>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">Preview</span>
+        </div>
+        <div className="mt-4 space-y-3 text-xs text-slate-300">
+          {recentSwaps.length === 0 ? (
+            <p>No historical swaps yet.</p>
+          ) : (
+            recentSwaps.map((swap) => (
+              <div key={swap.hash} className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                  <span>
+                    {swap.tokenIn.symbol} → {swap.tokenOut.symbol}
+                  </span>
+                  <span>{swap.privacyEnabled ? 'Shielded' : 'Public'}</span>
+                </div>
+                <div className="mt-2 flex flex-col gap-1 text-sm text-slate-100">
+                  <span>
+                    {swap.amountIn} {swap.tokenIn.symbol} ⇢ {swap.amountOut} {swap.tokenOut.symbol}
+                  </span>
+                  <span className="text-[11px] text-slate-500">{new Date(swap.timestamp).toLocaleTimeString()}</span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   )
@@ -51,10 +109,18 @@ function SwapLeftRail() {
   } = useSwap()
 
   const content = useMemo(() => {
-    if (step === 'connect') {
-      return <ConnectStep />
+    switch (step) {
+      case 'connect':
+        return <ConnectStep />
+      case 'configure':
+        return <ConfigureStep />
+      case 'review':
+        return <ReviewStep />
+      case 'confirmed':
+        return <ConfirmedStep />
+      default:
+        return <StepPlaceholder step={step} />
     }
-    return <StepPlaceholder step={step} />
   }, [step])
 
   return (
@@ -66,5 +132,5 @@ function SwapLeftRail() {
 }
 
 export function SwapScreen() {
-  return <Layout left={<SwapLeftRail />} right={<InsightsPlaceholder />} />
+  return <Layout left={<SwapLeftRail />} right={<InsightsPanel />} />
 }
