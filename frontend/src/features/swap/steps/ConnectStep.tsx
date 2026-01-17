@@ -32,8 +32,27 @@ function truncateAddress(address?: string) {
   return `${address.slice(0, 6)}…${address.slice(-4)}`
 }
 
+function formatTimestamp(timestamp?: number) {
+  if (!timestamp) return 'Just now'
+  try {
+    const formatter = new Intl.DateTimeFormat(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit'
+    })
+    return formatter.format(timestamp * 1000)
+  } catch {
+    return new Date(timestamp * 1000).toLocaleString()
+  }
+}
+
 export function ConnectStep() {
-  const { dispatch } = useSwap()
+  const {
+    state: { lastTx },
+    dispatch
+  } = useSwap()
   const {
     status,
     address,
@@ -95,6 +114,10 @@ export function ConnectStep() {
     }
     return null
   }, [error, status])
+
+  const onViewReceipt = useCallback(() => {
+    dispatch({ type: 'SET_STEP', step: 'confirmed' })
+  }, [dispatch])
 
   return (
     <StepFrame
@@ -163,6 +186,28 @@ export function ConnectStep() {
           </div>
         </div>
       </div>
+
+      {lastTx ? (
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-200">Last swap</div>
+            <button
+              type="button"
+              onClick={onViewReceipt}
+              className="text-[10px] font-semibold uppercase tracking-[0.3em] text-indigo-300 transition hover:text-indigo-100"
+            >
+              View receipt
+            </button>
+          </div>
+          <div className="space-y-2 text-xs text-slate-400">
+            <div className="flex items-center justify-between">
+              <span>{lastTx.amountIn} {lastTx.tokenIn.symbol} → {lastTx.amountOut ?? '--'} {lastTx.tokenOut.symbol}</span>
+              <span className="text-[11px] text-slate-500">{formatTimestamp(lastTx.timestamp)}</span>
+            </div>
+            <div className="truncate text-[11px] text-slate-500">{lastTx.hash}</div>
+          </div>
+        </div>
+      ) : null}
     </StepFrame>
   )
 }
