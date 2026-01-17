@@ -4,6 +4,10 @@ import { StepTabs } from './components/StepTabs'
 import { useSwap } from './state'
 import { SWAP_STEPS, type SwapStep } from './steps'
 import { ConnectStep } from './steps/ConnectStep'
+import { ConfigureStep } from './steps/ConfigureStep'
+import { ReviewStep } from './steps/ReviewStep'
+import { ConfirmedStep } from './steps/ConfirmedStep'
+import { useInsights } from './insights'
 
 function StepPlaceholder({ step }: Readonly<{ step: SwapStep }>) {
   const meta = useMemo(() => SWAP_STEPS.find((s) => s.id === step), [step])
